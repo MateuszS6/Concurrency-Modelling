@@ -1,3 +1,9 @@
 /* Question 1 */
 
+NS = (n -> ne -> se -> Q3),
+	Q3 = (s -> ne -> nw -> nw -> sw -> Q3).
 
+WE = (ne -> se -> Q3),
+	Q3 = (e -> e -> ne -> nw -> nw -> sw -> Q3).
+
+||S = (NS || WE).
