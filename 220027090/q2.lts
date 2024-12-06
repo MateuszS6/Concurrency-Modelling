@@ -5,7 +5,9 @@ DRINKS = ( brown -> tick -> tock -> chocolate -> DRINKS
 	| green -> tick -> tea -> DRINKS).
 
 /* Part A */
-/* The overall probability of producing coffee in this machine is 1/3. */
+/* The overall probability of producing coffee in this machine is 1/3,
+since it is one of the only three options. */
 
 /* Part B */
-/* Once the green button is pressed, it takes 1 tick to produce tea. */
+/* Once the green button is pressed, it takes 1 tick, or 1 transition,
+to produce tea. */
