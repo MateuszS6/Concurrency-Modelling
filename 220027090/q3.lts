@@ -20,3 +20,14 @@ set Gangs = {sharks, jets}
 // Property enforcing mutual exclusion
 property MUTEX = ([g:Gangs].enter -> [g].play -> [g].leave -> MUTEX).
 
+/* Part D */
+
+// Court as a shared resource
+COURT = (enter -> leave -> COURT).
+
+// Users of the court
+GANG = (enter -> play -> leave -> GANG).
+
+// System composition
+||COURT_SHARE = ([Gangs]:GANG || {[Gangs]}::COURT || MUTEX).
+
