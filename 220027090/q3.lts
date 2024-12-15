@@ -12,3 +12,11 @@ Processes Involved:
 	2) JETS - Represents the behaviour of the Jet gang.
 	3) COURT - Represents the court as a shared resource.
 */
+
+/* Part B */
+
+set Gangs = {sharks, jets}
+
+// Property enforcing mutual exclusion
+property MUTEX = ([g:Gangs].enter -> [g].play -> [g].leave -> MUTEX).
+
