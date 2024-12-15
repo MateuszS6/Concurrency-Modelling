@@ -4,12 +4,11 @@
 Part A
 ------
 Actions of Interest:
-	1) Go - A gang comes to the court.
+	1) Enter - A gang enters the court.
 	2) Play - A gang plays basketball on the court.
 	3) Leave - A gang leaves the court.
-These actions can be specific to each gang.
 Processes Involved:
-	1) Sharks - Represents the behaviour of the Shark gang.
-	2) Jets - Represents the behaviour of the Jet gang.
-	3) Court - Represents the court as a shared resource.
+	1) SHARKS - Represents the behaviour of the Shark gang.
+	2) JETS - Represents the behaviour of the Jet gang.
+	3) COURT - Represents the court as a shared resource.
 */
