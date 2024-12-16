@@ -9,7 +9,7 @@ Actions of Interest:
 	3) leave - A gang leaves the court.
 Processes Involved:
 	1) GANG - Represents the behaviour of both the Sharks and the Jets.
-	3) COURT - Represents the court as a shared resource.
+	2) COURT - Represents the court as a shared resource.
 */
 
 /* Part B */
