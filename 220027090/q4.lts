@@ -1,1 +1,19 @@
 /* Question 4 */
+
+/*
+Part A
+------
+Actions of Interest:
+	1) enter - A gang enters the court.
+	2) play - A gang plays basketball on the court.
+	3) leave - A gang leaves the court.
+New actions:
+	4) tie - A gang ties a red handkerchief to signal they are entering the court.
+	5) check - A gang checks the other gang's handkerchief for a red tie.
+	6) untie - A gang unties its own red handkerchief if it cannot enter or after leaving the court.
+Processes Involved:
+	1) GANG - Represents the behaviour of both the Sharks and the Jets.
+	2) COURT - Represents the court as a shared resource.
+New processes:
+	3) HANDKERCHIEF - Represents each gang's handkerchief status (red or white).
+*/
