@@ -8,8 +8,7 @@ Actions of Interest:
 	2) Play - A gang plays basketball on the court.
 	3) Leave - A gang leaves the court.
 Processes Involved:
-	1) SHARKS - Represents the behaviour of the Shark gang.
-	2) JETS - Represents the behaviour of the Jet gang.
+	1) GANG - Represents the behaviour of both the Sharks and the Jets.
 	3) COURT - Represents the court as a shared resource.
 */
 
