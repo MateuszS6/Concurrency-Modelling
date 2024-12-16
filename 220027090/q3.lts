@@ -20,11 +20,11 @@ property MUTEX = (sharks.court.go -> sharks.court.leave -> MUTEX
 
 /* Part D */
 
-// Court as a shared resource
-COURT = (go -> leave -> COURT).
-
 // Users of the court
 GANG = (court.go -> play -> court.leave -> GANG).
+
+// Court as a shared resource
+COURT = (go -> leave -> COURT).
 
 set Gangs = {sharks, jets}
 
