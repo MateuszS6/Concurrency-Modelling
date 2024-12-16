@@ -15,19 +15,20 @@ Processes Involved:
 
 /* Part B */
 
-set Gangs = {sharks, jets}
-
 // Property enforcing mutual exclusion
-property MUTEX = ([g:Gangs].enter -> [g].play -> [g].leave -> MUTEX).
+property MUTEX = (sharks.court.go -> sharks.court.leave -> MUTEX
+	| jets.court.go -> jets.court.leave -> MUTEX).
 
 /* Part D */
 
 // Court as a shared resource
-COURT = (enter -> play -> leave -> COURT).
+COURT = (go -> leave -> COURT).
 
 // Users of the court
-GANG = (enter -> play -> leave -> GANG).
+GANG = (court.go -> play -> court.leave -> GANG).
+
+set Gangs = {sharks, jets}
 
 // System composition
-||COURT_SHARE = ([Gangs]:GANG || {[Gangs]}::COURT || MUTEX).
+||COURT_SHARE = (Gangs:GANG || Gangs::court:COURT || MUTEX).
 
