@@ -9,7 +9,7 @@ Actions of Interest:
 	3) leave - A gang leaves the court.
 New actions:
 	4) tie - A gang ties a red handkerchief to signal they are entering the court.
-	5) check - A gang checks the other gang's handkerchief for a red tie.
+	5) see - A gang checks the other gang's handkerchief for a red tie.
 	6) untie - A gang unties its own red handkerchief if it cannot enter or after leaving the court.
 Processes Involved:
 	1) GANG - Represents the behaviour of both the Sharks and the Jets.
@@ -17,3 +17,62 @@ Processes Involved:
 New processes:
 	3) HANDKERCHIEF - Represents each gang's handkerchief status (red or white).
 */
+
+/* Part C */
+
+// Property enforcing mutual exclusion
+property MUTEX = (sharks.court.go -> sharks.court.leave -> MUTEX
+	| jets.court.go -> jets.court.leave -> MUTEX).
+
+// Users of the court
+GANG = (tie -> CHECK),
+	CHECK = (see.white -> CAN_ENTER | see.red -> FINISH),
+	CAN_ENTER = (court.go -> play -> court.leave -> FINISH),
+	FINISH = (untie -> GANG).
+
+const Empty = 0
+const Taken = 1
+range States = Empty..Taken
+
+// Court as a shared resource
+COURT = (go -> leave -> COURT).
+
+COURTv2 = C[Empty],
+	C[Empty] = (tie -> C[Taken] | see[Empty].white -> C[Taken]),
+	C[Taken] = (tie -> C[Taken]
+		| see[Taken].white -> court.go -> C[Taken]
+		| see[Taken].red -> C[Taken]
+		| court.go -> C[Taken]
+		| court.leave -> untie -> C[Empty]
+		| untie -> C[Empty]).
+
+// Handkerchiefs as signals
+HANDKERCHIEFS = NONE,
+	NONE =
+		( tie -> SINGLE
+		| untie -> NONE
+		),
+	SINGLE =
+		( tie -> DOUBLE
+		| see.white -> ACTIVE
+		| untie -> NONE
+		),
+	ACTIVE = (tie -> ACTIVE
+		| see.red -> ACTIVE
+		| untie -> ACTIVE
+		| court.leave -> SINGLE
+		),
+	DOUBLE =
+		( see.red -> DOUBLE
+		| untie -> SINGLE
+		).
+
+HANDKERCHIEF = H[0],
+	H[0] = (tie -> untie -> HANDKERCHIEF).
+
+set Gangs = {sharks, jets}
+
+// System composition
+||COURT_SHARE = (Gangs:GANG || Gangs::court:COURT || Gangs::HANDKERCHIEFS).
+
+||CHECK = (COURT_SHARE || MUTEX).
