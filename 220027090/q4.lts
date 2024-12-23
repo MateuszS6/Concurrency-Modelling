@@ -15,7 +15,13 @@ Processes Involved:
 	1) GANG - Represents the behaviour of both the Sharks and the Jets.
 	2) COURT - Represents the court as a shared resource.
 New processes:
-	3) HANDKERCHIEF - Represents each gang's handkerchief status (red or white).
+	3) HANDKERCHIEF - Represents the collective handkerchief status at the court.
+*/
+
+/*
+Part B
+------
+Structural diagram provided in PDF file.
 */
 
 /* Part C */
@@ -25,21 +31,18 @@ property MUTEX = (sharks.court.go -> sharks.court.leave -> MUTEX
 	| jets.court.go -> jets.court.leave -> MUTEX).
 
 // Users of the court
-GANG = (tie -> CHECK),
-	CHECK = (see.white -> CAN_ENTER | see.red -> FINISH),
-	CAN_ENTER = (court.go -> play -> court.leave -> FINISH),
-	FINISH = (untie -> GANG).
+GANG = (tie -> CHECKING),
+	CHECKING = (see.white -> READY | see.red -> DONE),
+	READY = (court.go -> play -> court.leave -> DONE),
+	DONE = (untie -> GANG).
 
 // Court as a shared resource
 COURT = (go -> leave -> COURT).
 
-set Colours = {white, red}
-
 // Handkerchiefs as signals
-HANDKERCHIEFS = NONE,
-	NONE = (tie -> SINGLE),
-	SINGLE = (tie -> DOUBLE | see.white -> SINGLE | untie -> NONE),
-	DOUBLE = (see.red -> DOUBLE | untie -> SINGLE).
+HANDKERCHIEFS = BOTH,
+	BOTH = (tie -> ONE | see.red -> BOTH | untie -> ONE),
+	ONE = (tie -> BOTH | see.white -> ONE | untie -> BOTH).
 
 set Gangs = {sharks, jets}
 
