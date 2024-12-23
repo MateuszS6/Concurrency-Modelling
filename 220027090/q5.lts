@@ -1,1 +1,36 @@
-/* Question 5 */
+/*
+Question 5
+----------
+Greedy behaviour implies that gangs will repeatedly
+attempt to go to the court as soon as possible,
+potentially locking the other gang out.
+The police department is right to be worried about this.
+*/
+
+property MUTEX = (sharks.court.go -> sharks.court.leave -> MUTEX
+	| jets.court.go -> jets.court.leave -> MUTEX).
+
+GANG = (tie -> CHECKING),
+	CHECKING = (see.white -> READY | see.red -> DONE),
+	READY = (court.go -> play -> court.leave -> DONE),
+	DONE = (untie -> GANG).
+
+COURT = (go -> leave -> COURT).
+
+HANDKERCHIEFS = BOTH,
+	BOTH = (tie -> ONE | see.red -> BOTH | untie -> ONE),
+	ONE = (tie -> BOTH | see.white -> ONE | untie -> BOTH).
+
+set Gangs = {sharks, jets}
+
+||COURT_SHARE = (Gangs:GANG || Gangs::court:COURT || Gangs::HANDKERCHIEFS).
+
+||CHECK = (COURT_SHARE || MUTEX).
+
+// Assumption that the gangs are fair
+progress SHARKS_FAIR = {sharks.court.go, sharks.untie}
+progress JETS_FAIR = {jets.court.go, sharks.untie}
+
+// Assumption that the gangs are greedy
+progress SHARKS_GREEDY = {sharks.tie, sharks.court.go}
+progress JETS_GREEDY = {jets.tie, jets.court.go}
