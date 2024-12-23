@@ -18,6 +18,12 @@ Processes Involved:
 property MUTEX = (sharks.court.go -> sharks.court.leave -> MUTEX
 	| jets.court.go -> jets.court.leave -> MUTEX).
 
+/*
+Part C
+------
+Structural diagram provided in PDF file.
+*/
+
 /* Part D */
 
 // Users of the court
