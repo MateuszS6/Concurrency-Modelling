@@ -30,45 +30,16 @@ GANG = (tie -> CHECK),
 	CAN_ENTER = (court.go -> play -> court.leave -> FINISH),
 	FINISH = (untie -> GANG).
 
-const Empty = 0
-const Taken = 1
-range States = Empty..Taken
-
 // Court as a shared resource
 COURT = (go -> leave -> COURT).
 
-COURTv2 = C[Empty],
-	C[Empty] = (tie -> C[Taken] | see[Empty].white -> C[Taken]),
-	C[Taken] = (tie -> C[Taken]
-		| see[Taken].white -> court.go -> C[Taken]
-		| see[Taken].red -> C[Taken]
-		| court.go -> C[Taken]
-		| court.leave -> untie -> C[Empty]
-		| untie -> C[Empty]).
+set Colours = {white, red}
 
 // Handkerchiefs as signals
 HANDKERCHIEFS = NONE,
-	NONE =
-		( tie -> SINGLE
-		| untie -> NONE
-		),
-	SINGLE =
-		( tie -> DOUBLE
-		| see.white -> ACTIVE
-		| untie -> NONE
-		),
-	ACTIVE = (tie -> ACTIVE
-		| see.red -> ACTIVE
-		| untie -> ACTIVE
-		| court.leave -> SINGLE
-		),
-	DOUBLE =
-		( see.red -> DOUBLE
-		| untie -> SINGLE
-		).
-
-HANDKERCHIEF = H[0],
-	H[0] = (tie -> untie -> HANDKERCHIEF).
+	NONE = (tie -> SINGLE),
+	SINGLE = (tie -> DOUBLE | see.white -> SINGLE | untie -> NONE),
+	DOUBLE = (see.red -> DOUBLE | untie -> SINGLE).
 
 set Gangs = {sharks, jets}
 
