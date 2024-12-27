@@ -11,7 +11,7 @@ Actions of Interest:
 	5) see - A gang checks the other gang's handkerchief for a red tie.
 	6) untie - A gang unties its own red handkerchief if it cannot enter or after leaving the court.
 New Actions:
-	7) setTo - A gang sets the turn indicator to the other gang.
+	7) setTurn - A gang sets the turn indicator to the other gang.
 	8) checkTurn - A gang checks the turn indicator for the next gang that can enter the court.
 	9) wait - A gang waits if the turn is not theirs and the other handkerchief is red.
 Processes Involved:
@@ -64,13 +64,11 @@ HANDKERCHIEFS = BOTH,
 	BOTH = (tie -> ONE | see.red -> BOTH | untie -> ONE),
 	ONE = (tie -> BOTH | see.white -> ONE | untie -> BOTH).
 
-set Turns = {none, sharks, jets}
-
 // Turn indicator for fairness
 INDICATOR = NONE,
-	NONE = (setTo['sharks] -> TURN_S | setTo['jets] -> TURN_J),
-	TURN_S = (setTo['jets] -> TURN_J | checkTurn['sharks] -> TURN_S),
-	TURN_J = (setTo['sharks] -> TURN_S | checkTurn['jets] -> TURN_J).
+	NONE = (setTurn['sharks] -> TURN_S | setTurn['jets] -> TURN_J),
+	TURN_S = (setTurn['jets] -> TURN_J | checkTurn['sharks] -> TURN_S),
+	TURN_J = (setTurn['sharks] -> TURN_S | checkTurn['jets] -> TURN_J).
 
 set Gangs = {sharks, jets}
 
