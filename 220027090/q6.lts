@@ -21,6 +21,13 @@ Processes Involved:
 New Processes:
 	4) INDICATOR - Represents the turn indicator as a shared resource, showing which can can play next.
 */
+
+/*
+Part B
+------
+Structural diagram provided in PDF file.
+*/
+
 progress JETS_FAIR = {jets.court.go, sharks.untie}
 
 // Progress check (Q5) - Assumption that the gangs are greedy
