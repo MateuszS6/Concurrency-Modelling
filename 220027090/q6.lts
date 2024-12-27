@@ -88,6 +88,10 @@ set Gangs = {sharks, jets}
 // Property (Q3) satisfaction check
 ||CHECK = (COURT_SHARE || MUTEX).
 
+/* Part E */
+
+// Progress check (Q5) - Assumption that the gangs are fair
+progress SHARKS_FAIR = {sharks.court.go, sharks.untie}
 progress JETS_FAIR = {jets.court.go, sharks.untie}
 
 // Progress check (Q5) - Assumption that the gangs are greedy
