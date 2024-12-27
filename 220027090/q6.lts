@@ -1,1 +1,28 @@
 /* Question 6 */
+
+/*
+Part A
+------
+Actions of Interest:
+	1) enter - A gang enters the court.
+	2) play - A gang plays basketball on the court.
+	3) leave - A gang leaves the court.
+	4) tie - A gang ties a red handkerchief to signal they are entering the court.
+	5) see - A gang checks the other gang's handkerchief for a red tie.
+	6) untie - A gang unties its own red handkerchief if it cannot enter or after leaving the court.
+New Actions:
+	7) setTo - A gang sets the turn indicator to the other gang.
+	8) checkTurn - A gang checks the turn indicator for the next gang that can enter the court.
+	9) wait - A gang waits if the turn is not theirs and the other handkerchief is red.
+Processes Involved:
+	1) GANG - Represents the behaviour of both the Sharks and the Jets.
+	2) COURT - Represents the court as a shared resource.
+	3) HANDKERCHIEFS - Represents the collective handkerchief status at the court.
+New Processes:
+	4) INDICATOR - Represents the turn indicator as a shared resource, showing which can can play next.
+*/
+progress JETS_FAIR = {jets.court.go, sharks.untie}
+
+// Progress check (Q5) - Assumption that the gangs are greedy
+progress SHARKS_GREEDY = {sharks.tie, sharks.court.go}
+progress JETS_GREEDY = {jets.tie, jets.court.go}
