@@ -82,6 +82,12 @@ set Gangs = {sharks, jets}
 	|| Gangs::INDICATOR)
 //	\{sharks.setTo['sharks], jets.setTo['jets]}
 .
+
+/* Part D */
+
+// Property (Q3) satisfaction check
+||CHECK = (COURT_SHARE || MUTEX).
+
 progress JETS_FAIR = {jets.court.go, sharks.untie}
 
 // Progress check (Q5) - Assumption that the gangs are greedy
