@@ -28,6 +28,60 @@ Part B
 Structural diagram provided in PDF file.
 */
 
+/* Part C */
+
+// Property enforcing mutual exclusion
+property MUTEX = (sharks.court.go -> sharks.court.leave -> MUTEX
+	| jets.court.go -> jets.court.leave -> MUTEX).
+
+// Users of the court
+GANG(US='us, OTHERS='others) = START,
+	START = (tie -> SET_OR_CHECK),
+	SET_OR_CHECK = (setTo[OTHERS] -> CHECK
+		| checkTurn[OTHERS] -> see.{white, red} -> WAIT_0),
+	WAIT_0 = (wait -> SET_OR_CHECK),
+	CHECK = (checkTurn[US] -> CHECK_US_SEE
+		| checkTurn[OTHERS] -> CHECK_THEM_SEE
+		| see.white -> SEE_WHITE_CHECK
+		| see.red -> SEE_RED_CHECK),
+	CHECK_US_SEE = (see.white -> ENTER
+		| see.red -> DONE),
+	CHECK_THEM_SEE = (see.white -> ENTER
+		| see.red -> WAIT_1),
+	SEE_WHITE_CHECK = (checkTurn[US] -> ENTER
+		| checkTurn[OTHERS] -> ENTER),
+	SEE_RED_CHECK = (checkTurn[US] -> DONE
+		| checkTurn[OTHERS] -> WAIT_1),
+	ENTER = (court.go -> play -> court.leave -> DONE),
+	WAIT_1 = (wait -> CHECK),
+	DONE = (untie -> START).
+
+// Court as a shared resource
+COURT = (go -> leave -> COURT).
+
+// Handkerchiefs as signals
+HANDKERCHIEFS = BOTH,
+	BOTH = (tie -> ONE | see.red -> BOTH | untie -> ONE),
+	ONE = (tie -> BOTH | see.white -> ONE | untie -> BOTH).
+
+set Turns = {none, sharks, jets}
+
+// Turn indicator for fairness
+INDICATOR = NONE,
+	NONE = (setTo['sharks] -> TURN_S | setTo['jets] -> TURN_J),
+	TURN_S = (setTo['jets] -> TURN_J | checkTurn['sharks] -> TURN_S),
+	TURN_J = (setTo['sharks] -> TURN_S | checkTurn['jets] -> TURN_J).
+
+set Gangs = {sharks, jets}
+
+// System composition
+||COURT_SHARE = (sharks:GANG('sharks,'jets)
+	|| jets:GANG('jets,'sharks)
+	|| Gangs::court:COURT
+	|| Gangs::HANDKERCHIEFS
+	|| Gangs::INDICATOR)
+//	\{sharks.setTo['sharks], jets.setTo['jets]}
+.
 progress JETS_FAIR = {jets.court.go, sharks.untie}
 
 // Progress check (Q5) - Assumption that the gangs are greedy
