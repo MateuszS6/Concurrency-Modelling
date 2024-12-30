@@ -35,8 +35,8 @@ property MUTEX = (sharks.court.go -> sharks.court.leave -> MUTEX
 	| jets.court.go -> jets.court.leave -> MUTEX).
 
 // Users of the court
-GANG(US='us, OTHERS='others) = START,
-	START = (tie -> SET_OR_CHECK),
+GANG(US='us, OTHERS='others) = BEGIN,
+	BEGIN = (tie -> SET_OR_CHECK),
 	SET_OR_CHECK = (setTurn[OTHERS] -> CHECK
 		| checkTurn[OTHERS] -> wait -> SET_OR_CHECK),
 	CHECK = (checkTurn[US] -> TURN_US
@@ -47,7 +47,7 @@ GANG(US='us, OTHERS='others) = START,
 		| see.red -> WAIT),
 	ENTER = (court.go -> play -> court.leave -> DONE),
 	WAIT = (wait -> CHECK),
-	DONE = (untie -> START).
+	DONE = (untie -> BEGIN).
 
 // Court as a shared resource
 COURT = (go -> leave -> COURT).
