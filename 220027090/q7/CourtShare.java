@@ -21,19 +21,18 @@ public class CourtShare {
     }
 
     // Print the status of the court
-    public static void printStatus(boolean inUse) {
-        String state = inUse ? "Taken" : "Empty";
-        System.out.println("\t| Court: " + state);
+    public static void printStatus(Court.State state) {
+        System.out.print("  ->  Court: " + state + '\n');
     }
 
     // Print the status of the handkerchiefs
-    public static void printStatus(int numRed) {
-        System.out.println("\t| Red Handkerchiefs: " + numRed);
+    public static void printStatus(Handkerchiefs.State state) {
+        System.out.print("  ->  Red Handkerchiefs: " + state + '\n');
     }
 
     // Print status of the turn indicator
-    public static void printStatus(String turn) {
-        System.out.println("\t| Next Turn: " + turn.toUpperCase());
+    public static void printStatus(Indicator.State state) {
+        System.out.print("  ->  Turn: " + state + '\n');
     }
 }
 
@@ -43,8 +42,6 @@ public class CourtShare {
 * behaving similarly to the FSP model.
 */
 class Gang extends Thread {
-    public final static String SHARKS = "sharks"; // Constant for SHARKS name
-    public final static String JETS = "jets"; // Constant for JETS name
     private final String us; // This gang's name
     private final String others; // Other gang's name
     private final Court court;
@@ -76,7 +73,7 @@ class Gang extends Thread {
         if (tryCount++ >= tryLimit) return; // Stop if the try limit is reached
         handkerchiefs.tie(us);
         if (!turnIndicator.checkTurn(us).equals(others)) {
-            turnIndicator.setTurn(us);
+            turnIndicator.setTurn(us, others);
             check();
         } else {
             waitTurn();
@@ -122,86 +119,110 @@ class Gang extends Thread {
 }
 
 /*
- * Maps to COURT, the shared resource that the gangs access,
- * with two boolean-like states and go and leave to switch between them.
+ * Maps to COURT, a shared resource that the gangs access.
  */
 class Court {
-    // [Maps to the two states in COURT]
-    private boolean inUse = false;
+    // * Maps to the 2 states in COURT *
+    public enum State {
+        EMPTY,
+        TAKEN
+    }
+
+    private State state = State.EMPTY; // To print in terminal
 
     // Enter the court
     public synchronized void go(String us) {
-        inUse = true;
-        System.out.println(us + ".court.go");
-        CourtShare.printStatus(inUse);
+        state = State.TAKEN;
+        System.out.print(us + ".court.go");
+        CourtShare.printStatus(state);
     }
 
     // Leave the court
     public synchronized void leave(String us) {
-        inUse = false;
-        System.out.println(us + ".court.leave");
-        CourtShare.printStatus(inUse);
+        state = State.EMPTY;
+        System.out.print(us + ".court.leave");
+        CourtShare.printStatus(state);
     }
 }
 
 /*
- * Maps to HANDKERCHIEFS, the signals to each gang,
- * with the ability to be in three states like the FSP model.
+ * Maps to HANDKERCHIEFS, the signals to each gang.
  */
 class Handkerchiefs {
-    // [Maps to the three states in HANDKERCHIEFS]
-    private int numRed = 0; // Invariant: 0 <= numRed <= 2
+    // * Maps to the 3 states in HANDKERCHIEFS *
+    public enum State {
+        NONE, // There are no red handkerchiefs
+        ONE, // One side has a red handkerchief tied
+        BOTH // Both sides have a red handkerchief tied
+    }
+
+    private State state = State.NONE;
 
     // Tie own red handkerchief
     public synchronized void tie(String us) {
-        if (numRed >= 2) return;
-        numRed++;
-        System.out.println(us + ".tie");
-        CourtShare.printStatus(numRed);
+        switch (state) {
+            case NONE: state = State.ONE; break;
+            case ONE: state = State.BOTH; break;
+            case BOTH: return;
+        }
+        System.out.print(us + ".tie");
+        CourtShare.printStatus(state);
     }
 
     // Untie own red handkerchief
     public synchronized void untie(String us) {
-        if (numRed <= 0) return;
-        numRed--;
-        System.out.println(us + ".untie");
-        CourtShare.printStatus(numRed);
+        switch (state) {
+            case NONE: return;
+            case ONE: state = State.NONE; break;
+            case BOTH: state = State.ONE; break;
+        }
+        System.out.print(us + ".untie");
+        CourtShare.printStatus(state);
     }
 
     // See the other handkerchief being either white or red
     public synchronized String see(String us) {
-        String colour = (numRed < 2) ? "white" : "red";
+        String colour = "";
+        switch (state) {
+            case NONE:
+            case ONE: colour = "white"; break;
+            case BOTH: colour = "red"; break;
+        }
         System.out.println(us + ".see." + colour);
         return colour;
     }
 }
 
 /*
- * Maps to INDICATOR, the turn indicator for fairness,
- * with the ability to be in three states like the FSP model.
+ * Maps to INDICATOR, the turn indicator for fairness.
  */
 class Indicator {
-    // [Maps to the three states in INDICATOR]
-    private String turn = ""; // Invariant: turn = "" OR "sharks" OR "jets"
+    // * Maps to the 3 states in INDICATOR *
+    public enum State {
+        NONE,
+        SHARKS,
+        JETS
+    }
+
+    private State state = State.NONE;
 
     // Set the turn to the other gang
-    public synchronized void setTurn(String us) {
-        if (turn.isEmpty()) {
-            turn = (us.equals(Gang.SHARKS)) ? Gang.JETS : Gang.SHARKS;
-        } else if (turn.equals(Gang.JETS)) {
-            if (us.equals(Gang.SHARKS)) turn = Gang.JETS;
-            else return;
-        } else if (turn.equals(Gang.SHARKS)) {
-            if (us.equals(Gang.JETS)) turn = Gang.SHARKS;
-            else return;
+    public synchronized void setTurn(String us, String others) {
+        switch (state) {
+            // Sharks only allowed to set to SHARKS, and Jets only allowed to set to JETS
+            case NONE: state = State.valueOf(others.toUpperCase()); break;
+            // If turn SHARKS, only Jets can change it
+            case SHARKS: if (us.equals("jets")) state = State.valueOf(others.toUpperCase()); else return; break;
+            // If turn JETS, only Sharks can change it
+            case JETS: if (us.equals("sharks")) state = State.valueOf(others.toUpperCase()); else return; break;
         }
-        System.out.println(us + ".setTurn." + turn);
-        CourtShare.printStatus(turn);
+        System.out.print(us + ".setTurn." + state.toString().toLowerCase());
+        CourtShare.printStatus(state);
     }
 
     // Check the indicator for the next turn
     public synchronized String checkTurn(String us) {
-        if (!turn.isEmpty()) System.out.println(us + ".checkTurn." + turn);
-        return turn;
+        if (state != State.NONE) System.out.println(us + ".checkTurn." + state.toString().toLowerCase());
+        return state.toString().toLowerCase();
     }
 }
